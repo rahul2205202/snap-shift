@@ -54,7 +54,7 @@ export default function ImageConverter() {
 
         try {
             // Replace with your actual API endpoint if different
-            const response = await fetch('http://localhost:8080/api/convert/image', {
+            const response = await fetch('https://tools-api-552700783517.europe-west1.run.app/api/convert/image', {
                 method: 'POST',
                 body: formData,
             });

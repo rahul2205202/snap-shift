@@ -54,7 +54,7 @@ export default function ImageToPdfConverter() {
         });
 
         try {
-            const response = await fetch('http://localhost:8080/api/convert/image-to-pdf', {
+            const response = await fetch('https://tools-api-552700783517.europe-west1.run.app/api/convert/image-to-pdf', {
                 method: 'POST',
                 body: formData,
             });
