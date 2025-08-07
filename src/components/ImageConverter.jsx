@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// 1. Import the service function
+import { convertImage } from '../service/ApiService'; // Adjust path if needed
 
 // You can place this component in your project, e.g., src/components/ImageConverter.jsx
 export default function ImageConverter() {
@@ -36,6 +38,7 @@ export default function ImageConverter() {
         setTargetFormat(event.target.value);
     };
 
+    // 2. Update handleSubmit to use the service
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -53,19 +56,8 @@ export default function ImageConverter() {
         formData.append('toFormat', targetFormat);
 
         try {
-            // Replace with your actual API endpoint if different
-            const response = await fetch('https://tools-api-552700783517.europe-west1.run.app/api/convert/image', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                // Try to read the error message from the server
-                const errorText = await response.text();
-                throw new Error(errorText || 'Image conversion failed.');
-            }
-
-            const imageBlob = await response.blob();
+            // Use the imported service function
+            const imageBlob = await convertImage(formData);
             setConvertedImageUrl(URL.createObjectURL(imageBlob));
 
         } catch (err) {

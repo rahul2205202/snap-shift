@@ -1,4 +1,6 @@
 import React, { useState, useCallback } from 'react';
+// 1. Import the service function
+import { generateAiImage } from '../service/ApiService'; // Adjust path if needed
 
 // --- Helper Components (Styled for the light theme) ---
 
@@ -21,6 +23,7 @@ export default function ImageGenerator() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // 2. Update handleGenerateImage to use the service
     const handleGenerateImage = useCallback(async (e) => {
         e.preventDefault();
         if (!prompt.trim()) {
@@ -32,33 +35,9 @@ export default function ImageGenerator() {
         setImageUrl(null);
 
         try {
-            const payload = {
-                instances: [{ prompt }],
-                parameters: { "sampleCount": 1 }
-            };
-            
-            // The API key is left as an empty string. The environment will provide it.
-            const apiKey = "AIzaSyAHXDjmlQRu9Be0zlwO26xsUYNeEcY4FF0"; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error?.message || 'The API returned an error.');
-            }
-
-            const result = await response.json();
-            if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-                const generatedImageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-                setImageUrl(generatedImageUrl);
-            } else {
-                throw new Error('API did not return a valid image.');
-            }
+            // Use the imported service function
+            const generatedImageUrl = await generateAiImage(prompt);
+            setImageUrl(generatedImageUrl);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
             setError(`Failed to generate image: ${errorMessage}`);

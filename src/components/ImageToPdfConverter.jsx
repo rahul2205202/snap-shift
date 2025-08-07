@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// 1. Import the service function
+import { convertImagesToPdf } from '../service/ApiService'; // Adjust path if needed
 
 export default function ImageToPdfConverter() {
     // State now holds an array of files and previews
@@ -35,6 +37,7 @@ export default function ImageToPdfConverter() {
         }
     };
 
+    // 2. Update handleSubmit to use the service
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -48,23 +51,13 @@ export default function ImageToPdfConverter() {
         setPdfUrl(null);
 
         const formData = new FormData();
-        // Append each file to the FormData object with the same key "files"
         selectedFiles.forEach(file => {
             formData.append('files', file);
         });
 
         try {
-            const response = await fetch('https://tools-api-552700783517.europe-west1.run.app/api/convert/image-to-pdf', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || 'PDF conversion failed.');
-            }
-
-            const pdfBlob = await response.blob();
+            // Use the imported service function
+            const pdfBlob = await convertImagesToPdf(formData);
             setPdfUrl(URL.createObjectURL(pdfBlob));
 
         } catch (err) {
@@ -74,7 +67,7 @@ export default function ImageToPdfConverter() {
             setIsLoading(false);
         }
     };
-    
+
     return (
         <div className="bg-gray-100 min-h-screen flex items-center justify-center font-sans p-4">
             <div className="w-full max-w-6xl bg-white rounded-lg shadow-xl p-8">
